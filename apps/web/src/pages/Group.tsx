@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiFetch } from "../lib/api";
 import { GroupMatchHistory } from "../components/GroupMatchHistory";
 import { GroupMatchPredictions } from "../components/GroupMatchPredictions";
+import { useNotifications } from "../context/NotificationContext";
 
 interface GroupDetail {
   id: string;
@@ -89,6 +90,7 @@ function DeleteGroupSection({ group }: { group: GroupDetail }) {
 export function Group() {
   const { id } = useParams<{ id: string }>();
   const [tab, setTab] = useState<"upcoming" | "history">("upcoming");
+  const { success } = useNotifications();
 
   const { data: group, isLoading: groupLoading } = useQuery({
     queryKey: ["group", id],
@@ -128,7 +130,10 @@ export function Group() {
             className="flex-1 rounded-xl border border-neutral-200 dark:border-white/10 bg-white/60 dark:bg-black/20 px-3 py-1.5 text-sm text-neutral-800 dark:text-neutral-200 outline-none"
           />
           <button
-            onClick={() => navigator.clipboard.writeText(inviteLink)}
+            onClick={() => {
+              navigator.clipboard.writeText(inviteLink);
+              success("Invite link copied to clipboard!");
+            }}
             className="rounded-xl bg-neutral-900 hover:bg-neutral-850 active:bg-neutral-950 text-white dark:bg-white dark:hover:bg-white/90 dark:active:bg-white/95 dark:text-neutral-900 px-4 py-1.5 text-sm font-semibold transition active:scale-[0.98]"
           >
             Copy
