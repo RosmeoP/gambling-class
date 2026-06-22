@@ -1,0 +1,16 @@
+{
+  "name": "gambling-class",
+  "private": true,
+  "packageManager": "pnpm@11.0.3",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "db:migrate": "pnpm --filter @gambling-class/api db:migrate",
+    "db:seed": "pnpm --filter @gambling-class/api db:seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0"
+  }
+}

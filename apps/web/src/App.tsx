@@ -1,0 +1,57 @@
+import { Navigate, Route, BrowserRouter, Routes } from "react-router-dom";
+import { NavBar } from "./components/NavBar";
+import { RequireAuth } from "./components/RequireAuth";
+import { AuthProvider } from "./context/AuthContext";
+import { Dashboard } from "./pages/Dashboard";
+import { Group } from "./pages/Group";
+import { JoinGroup } from "./pages/JoinGroup";
+import { Login } from "./pages/Login";
+import { NewGroup } from "./pages/NewGroup";
+import { Register } from "./pages/Register";
+
+export function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <NavBar />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/groups/new"
+            element={
+              <RequireAuth>
+                <NewGroup />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/groups/join"
+            element={
+              <RequireAuth>
+                <JoinGroup />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/groups/:id"
+            element={
+              <RequireAuth>
+                <Group />
+              </RequireAuth>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}

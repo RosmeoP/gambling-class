@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+
+  groupMemberships GroupMember[]
+  predictions      Prediction[]
+  createdGroups    Group[]      @relation("GroupCreator")
+}
+
+model Group {
+  id          String   @id @default(uuid())
+  name        String
+  inviteCode  String   @unique
+  createdById String
+  createdBy   User     @relation("GroupCreator", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+
+  members GroupMember[]
+}
+
+model GroupMember {
+  groupId  String
+  userId   String
+  role     String   @default("member") // "admin" | "member"
+  joinedAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([groupId, userId])
+}
+
+model Match {
+  id         String   @id @default(uuid())
+  externalId Int      @unique
+  homeTeam   String
+  awayTeam   String
+  kickoff    DateTime
+  status     String   @default("scheduled") // "scheduled" | "live" | "finished"
+  homeScore  Int?
+  awayScore  Int?
+
+  predictions Prediction[]
+}
+
+model Prediction {
+  id        String   @id @default(uuid())
+  userId    String
+  matchId   String
+  homeScore Int
+  awayScore Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, matchId])
+}
