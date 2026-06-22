@@ -1,7 +1,7 @@
 import type { GroupMemberDTO, MatchDTO } from "@gambling-class/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiFetch } from "../lib/api";
 import { GroupMatchHistory } from "../components/GroupMatchHistory";
 import { GroupMatchPredictions } from "../components/GroupMatchPredictions";
@@ -109,6 +109,13 @@ export function Group() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
+      <Link
+        to="/groups"
+        className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700"
+      >
+        ← Back to my groups
+      </Link>
+
       <h1 className="mb-2 text-2xl font-bold text-gray-900">{group.name}</h1>
 
       <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
