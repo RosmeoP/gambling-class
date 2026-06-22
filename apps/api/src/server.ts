@@ -7,7 +7,9 @@ import { groupsRouter } from "./routes/groups.js";
 import { matchesRouter } from "./routes/matches.js";
 import { predictionsRouter } from "./routes/predictions.js";
 
-const SYNC_INTERVAL_MS = 15 * 60 * 1000;
+// football-data.org's free tier allows 10 requests/minute; syncing every
+// 30s (2 req/min) keeps live scores fresh while staying well under that.
+const SYNC_INTERVAL_MS = 30 * 1000;
 
 function scheduleMatchSync() {
   if (!process.env.FOOTBALL_DATA_API_KEY) {
