@@ -2,13 +2,14 @@ import type { MatchDTO } from "@gambling-class/shared";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../lib/api";
+import { useNotifications } from "../context/NotificationContext";
 
 export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?: boolean }) {
   const queryClient = useQueryClient();
+  const notifications = useNotifications();
   const kickoffPassed = new Date(match.kickoff) <= new Date();
   const [homeScore, setHomeScore] = useState(match.myPrediction?.homeScore ?? 0);
   const [awayScore, setAwayScore] = useState(match.myPrediction?.awayScore ?? 0);
-  const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -17,7 +18,7 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
         body: JSON.stringify({ matchId: match.id, homeScore, awayScore }),
       }),
     onSuccess: () => {
-      setError(null);
+      notifications.success(match.myPrediction ? "Prediction updated!" : "Prediction submitted!");
       queryClient.invalidateQueries({ queryKey: ["matches"] });
     },
     onError: (err: any) => {
@@ -30,17 +31,16 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
           errMsg = err.message;
         }
       }
-      setError(errMsg);
+      notifications.error(errMsg);
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
 
     // 1. Kickoff passed check
     if (new Date(match.kickoff) <= new Date()) {
-      setError("This match has already started. Predictions are locked.");
+      notifications.error("This match has already started. Predictions are locked.");
       return;
     }
 
@@ -57,7 +57,7 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
       !Number.isInteger(homeVal) ||
       !Number.isInteger(awayVal)
     ) {
-      setError("Scores must be integers between 0 and 50.");
+      notifications.error("Scores must be integers between 0 and 50.");
       return;
     }
 
@@ -129,12 +129,6 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
       >
         {match.myPrediction ? "Update prediction" : "Submit prediction"}
       </button>
-
-      {error && (
-        <p className="relative mt-3 text-center text-xs font-semibold text-red-500 dark:text-red-400">
-          {error}
-        </p>
-      )}
     </>
   );
 
@@ -142,6 +136,7 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
     return (
       <form
         onSubmit={handleSubmit}
+        noValidate
         className="relative w-full text-neutral-900 dark:text-white"
       >
         {formContent}
@@ -152,6 +147,7 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
   return (
     <form
       onSubmit={handleSubmit}
+      noValidate
       className="liquid-glass p-5 text-neutral-900 dark:text-white"
     >
       <div className="liquid-glass-sheen" aria-hidden />
