@@ -38,10 +38,49 @@ async function listMatchesWithMyPrediction(userId: string, from: Date, to: Date)
   }));
 }
 
+matchesRouter.get("/teams", async (_req, res) => {
+  const homeTeams = await prisma.match.findMany({
+    select: { homeTeam: true },
+    distinct: ["homeTeam"],
+  });
+  const awayTeams = await prisma.match.findMany({
+    select: { awayTeam: true },
+    distinct: ["awayTeam"],
+  });
+  const teams = Array.from(
+    new Set([...homeTeams.map((m) => m.homeTeam), ...awayTeams.map((m) => m.awayTeam)]),
+  ).sort((a, b) => a.localeCompare(b));
+  res.json(teams);
+});
+
 matchesRouter.get("/today", async (req, res) => {
   const now = new Date();
   const matches = await listMatchesWithMyPrediction(req.userId!, startOfDay(now), endOfDay(now));
   res.json(matches);
+});
+
+matchesRouter.get("/upcoming", async (req, res) => {
+  const now = new Date();
+  const matches = await prisma.match.findMany({
+    where: { kickoff: { gt: endOfDay(now) } },
+    orderBy: { kickoff: "asc" },
+    take: 10,
+    include: { predictions: { where: { userId: req.userId! } } },
+  });
+
+  res.json(
+    matches.map((m) => ({
+      id: m.id,
+      externalId: m.externalId,
+      homeTeam: m.homeTeam,
+      awayTeam: m.awayTeam,
+      kickoff: m.kickoff,
+      status: m.status,
+      homeScore: m.homeScore,
+      awayScore: m.awayScore,
+      myPrediction: m.predictions[0] ?? null,
+    })),
+  );
 });
 
 matchesRouter.get("/", async (req, res) => {

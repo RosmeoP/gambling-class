@@ -132,7 +132,8 @@
 .flag-text-brazil,
 .flag-text-france,
 .flag-text-germany,
-.flag-text-netherlands {
+.flag-text-netherlands,
+.flag-text-default {
   background-size: 100% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -165,6 +166,10 @@
 
 .flag-text-netherlands {
   background-image: linear-gradient(90deg, #ae1c28, #d98ba0, #21468b);
+}
+
+.flag-text-default {
+  background-image: linear-gradient(90deg, #1f6f43, #1f3c88);
 }
 
 @keyframes liquid-morph {

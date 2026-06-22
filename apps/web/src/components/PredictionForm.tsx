@@ -22,11 +22,14 @@ export function PredictionForm({ match }: { match: MatchDTO }) {
 
   if (kickoffPassed) {
     return (
-      <p className="text-sm text-gray-500">
-        {match.myPrediction
-          ? `Your pick: ${match.myPrediction.homeScore} - ${match.myPrediction.awayScore}`
-          : "You didn't submit a prediction"}
-      </p>
+      <div className="rounded-2xl bg-black p-5 text-white shadow-lg">
+        <h3 className="text-lg font-bold">Your prediction</h3>
+        <p className="mt-2 text-sm text-white/70">
+          {match.myPrediction
+            ? `You predicted ${match.myPrediction.homeScore} - ${match.myPrediction.awayScore}`
+            : "You didn't submit a prediction for this match."}
+        </p>
+      </div>
     );
   }
 
@@ -36,31 +39,46 @@ export function PredictionForm({ match }: { match: MatchDTO }) {
         e.preventDefault();
         mutation.mutate();
       }}
-      className="flex items-center gap-2"
+      className="rounded-2xl bg-black p-5 text-white shadow-lg"
     >
-      <input
-        type="number"
-        min={0}
-        max={50}
-        value={homeScore}
-        onChange={(e) => setHomeScore(Number(e.target.value))}
-        className="w-14 rounded border border-gray-300 px-2 py-1 text-center text-sm"
-      />
-      <span className="text-gray-400">-</span>
-      <input
-        type="number"
-        min={0}
-        max={50}
-        value={awayScore}
-        onChange={(e) => setAwayScore(Number(e.target.value))}
-        className="w-14 rounded border border-gray-300 px-2 py-1 text-center text-sm"
-      />
+      <h3 className="text-lg font-bold">Predict the score</h3>
+
+      <div className="mt-5 flex items-center justify-center gap-6">
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-xs font-medium uppercase tracking-wide text-white/50">
+            {match.homeTeam}
+          </span>
+          <input
+            type="number"
+            min={0}
+            max={50}
+            value={homeScore}
+            onChange={(e) => setHomeScore(Number(e.target.value))}
+            className="w-16 rounded-lg border border-white/20 bg-white/10 py-2 text-center text-2xl font-bold text-white outline-none focus:border-orange-400"
+          />
+        </div>
+        <span className="text-xl font-bold text-white/40">-</span>
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-xs font-medium uppercase tracking-wide text-white/50">
+            {match.awayTeam}
+          </span>
+          <input
+            type="number"
+            min={0}
+            max={50}
+            value={awayScore}
+            onChange={(e) => setAwayScore(Number(e.target.value))}
+            className="w-16 rounded-lg border border-white/20 bg-white/10 py-2 text-center text-2xl font-bold text-white outline-none focus:border-orange-400"
+          />
+        </div>
+      </div>
+
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="rounded bg-emerald-600 px-3 py-1 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        className="mt-5 w-full rounded-full bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 py-2 text-sm font-bold uppercase tracking-wide text-black transition hover:opacity-90 disabled:opacity-50"
       >
-        {match.myPrediction ? "Update" : "Predict"}
+        {match.myPrediction ? "Update prediction" : "Submit prediction"}
       </button>
     </form>
   );

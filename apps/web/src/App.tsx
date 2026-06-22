@@ -8,6 +8,7 @@ import { JoinGroup } from "./pages/JoinGroup";
 import { Login } from "./pages/Login";
 import { NewGroup } from "./pages/NewGroup";
 import { Register } from "./pages/Register";
+import { Upcoming } from "./pages/Upcoming";
 
 export function App() {
   return (
@@ -22,6 +23,14 @@ export function App() {
             element={
               <RequireAuth>
                 <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/upcoming"
+            element={
+              <RequireAuth>
+                <Upcoming />
               </RequireAuth>
             }
           />

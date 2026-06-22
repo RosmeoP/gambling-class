@@ -1,52 +1,31 @@
 import { Shirt } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../lib/api";
+import { getFlagUrl } from "../lib/flags";
 
 const NAV_LINKS = [
   { to: "/", label: "Dashboard", colorClass: "flag-text-portugal" },
+  { to: "/upcoming", label: "Upcoming", colorClass: "flag-text-germany" },
   { to: "/groups/new", label: "New group", colorClass: "flag-text-argentina" },
   { to: "/groups/join", label: "Join group", colorClass: "flag-text-brazil" },
 ];
 
-const FLAG_OPTIONS: { value: string; label: string; gradient: string; colorClass: string }[] = [
-  {
-    value: "brazil",
-    label: "🇧🇷 Brazil",
-    gradient: "from-emerald-500 via-yellow-400 to-blue-700",
-    colorClass: "flag-text-brazil",
-  },
-  {
-    value: "portugal",
-    label: "🇵🇹 Portugal",
-    gradient: "from-green-700 via-green-700 to-red-600",
-    colorClass: "flag-text-portugal",
-  },
-  {
-    value: "argentina",
-    label: "🇦🇷 Argentina",
-    gradient: "from-sky-400 via-white to-sky-400",
-    colorClass: "flag-text-argentina",
-  },
-  {
-    value: "france",
-    label: "🇫🇷 France",
-    gradient: "from-blue-700 via-white to-red-600",
-    colorClass: "flag-text-france",
-  },
-  {
-    value: "germany",
-    label: "🇩🇪 Germany",
-    gradient: "from-neutral-900 via-red-600 to-yellow-400",
-    colorClass: "flag-text-germany",
-  },
-  {
-    value: "netherlands",
-    label: "🇳🇱 Netherlands",
-    gradient: "from-red-600 via-white to-blue-700",
-    colorClass: "flag-text-netherlands",
-  },
-];
+const TEAM_COLOR_CLASS: Record<string, string> = {
+  brazil: "flag-text-brazil",
+  portugal: "flag-text-portugal",
+  argentina: "flag-text-argentina",
+  france: "flag-text-france",
+  germany: "flag-text-germany",
+  netherlands: "flag-text-netherlands",
+};
+
+function getTeamColorClass(team: string | null): string {
+  if (!team) return "flag-text-default";
+  return TEAM_COLOR_CLASS[team.toLowerCase()] ?? "flag-text-default";
+}
 
 const FLAG_STORAGE_KEY = "gc_flag";
 
@@ -114,19 +93,33 @@ export function NavBar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [flag, setFlag] = useState<string>(
-    () => localStorage.getItem(FLAG_STORAGE_KEY) ?? FLAG_OPTIONS[0].value,
+  const { data: teams } = useQuery({
+    queryKey: ["matches", "teams"],
+    queryFn: () => apiFetch<string[]>("/matches/teams"),
+  });
+
+  const [selectedTeam, setSelectedTeam] = useState<string>(
+    () => localStorage.getItem(FLAG_STORAGE_KEY) ?? "",
   );
 
   useEffect(() => {
-    localStorage.setItem(FLAG_STORAGE_KEY, flag);
-  }, [flag]);
+    if (!teams || teams.length === 0) return;
+    if (!selectedTeam || !teams.includes(selectedTeam)) {
+      setSelectedTeam(teams[0]);
+    }
+  }, [teams, selectedTeam]);
+
+  useEffect(() => {
+    if (selectedTeam) {
+      localStorage.setItem(FLAG_STORAGE_KEY, selectedTeam);
+    }
+  }, [selectedTeam]);
 
   if (location.pathname === "/login" || location.pathname === "/register") {
     return null;
   }
 
-  const activeFlag = FLAG_OPTIONS.find((option) => option.value === flag) ?? FLAG_OPTIONS[0];
+  const flagUrl = getFlagUrl(selectedTeam);
 
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/40 bg-white/60 px-6 py-3 backdrop-blur-xl backdrop-saturate-150 shadow-[0_4px_30px_rgba(0,0,0,0.06)]">
@@ -138,24 +131,28 @@ export function NavBar() {
           <NavLinks pathname={location.pathname} />
 
           <div className="ml-2 flex items-center gap-2 rounded-full border border-white/50 bg-white/50 px-2 py-1 shadow-inner backdrop-blur-md">
-            <span
-              className={`flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br ${activeFlag.gradient} text-white shadow-sm`}
-            >
-              <Shirt className="h-4 w-4" strokeWidth={2.5} />
+            <span className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-white text-gray-400 shadow-sm">
+              {flagUrl ? (
+                <img src={flagUrl} alt={`${selectedTeam} flag`} className="h-full w-full object-cover" />
+              ) : (
+                <Shirt className="h-4 w-4" strokeWidth={2.5} />
+              )}
             </span>
-            <span className={`font-semibold ${activeFlag.colorClass}`}>{user.name}</span>
-            <select
-              value={flag}
-              onChange={(event) => setFlag(event.target.value)}
-              aria-label="Choose your flag"
-              className="rounded-full border border-gray-200 bg-white/70 px-2 py-1 text-xs text-gray-600 outline-none"
-            >
-              {FLAG_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <span className={`font-semibold ${getTeamColorClass(selectedTeam)}`}>{user.name}</span>
+            {teams && teams.length > 0 && (
+              <select
+                value={selectedTeam}
+                onChange={(event) => setSelectedTeam(event.target.value)}
+                aria-label="Choose your team"
+                className="rounded-full border border-gray-200 bg-white/70 px-2 py-1 text-xs text-gray-600 outline-none"
+              >
+                {teams.map((team) => (
+                  <option key={team} value={team}>
+                    {team}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <button
