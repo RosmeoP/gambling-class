@@ -1,18 +1,29 @@
 import type { MatchDTO } from "@gambling-class/shared";
-import { getFlagUrl } from "../lib/flags";
+import { getFlagUrl, getTeamCode } from "../lib/flags";
 
-function TeamBadge({ name }: { name: string }) {
+function TeamSide({ name, align }: { name: string; align: "left" | "right" }) {
   const flagUrl = getFlagUrl(name);
+  const flag = (
+    <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 shadow-inner ring-1 ring-white/15">
+      {flagUrl ? (
+        <img src={flagUrl} alt={`${name} flag`} className="h-full w-full object-cover" />
+      ) : (
+        <span className="text-xs font-bold text-white/40">?</span>
+      )}
+    </span>
+  );
+
+  const labels = (
+    <div className={align === "left" ? "text-left" : "text-right"}>
+      <p className="text-sm font-bold uppercase tracking-wide text-white">{getTeamCode(name)}</p>
+      <p className="truncate text-xs text-white/50">{name}</p>
+    </div>
+  );
+
   return (
-    <div className="flex flex-1 flex-col items-center gap-2">
-      <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-white shadow-inner ring-2 ring-white/20">
-        {flagUrl ? (
-          <img src={flagUrl} alt={`${name} flag`} className="h-full w-full object-cover" />
-        ) : (
-          <span className="text-xs font-bold text-gray-400">?</span>
-        )}
-      </span>
-      <span className="text-center text-sm font-semibold text-white">{name}</span>
+    <div className={`flex min-w-0 flex-1 items-center gap-3 ${align === "right" ? "flex-row-reverse" : ""}`}>
+      {flag}
+      {labels}
     </div>
   );
 }
@@ -39,9 +50,11 @@ export function MatchCard({
     timeZoneName: showWeekday ? "short" : undefined,
   });
 
+  const isScheduled = match.status === "scheduled";
+
   return (
-    <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-900 to-black p-5 shadow-lg">
-      <p className="text-center text-sm font-medium text-white/60">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900 via-zinc-900 to-black p-5 shadow-lg">
+      <p className="mb-4 text-center text-sm font-medium text-white/60">
         {formattedDate}
         {match.status === "live" && (
           <span className="ml-2 inline-flex items-center gap-1 text-red-400">
@@ -51,22 +64,27 @@ export function MatchCard({
         )}
       </p>
 
-      <div className="mt-4 flex items-center justify-between gap-2">
-        <TeamBadge name={match.homeTeam} />
+      <div className="flex items-center gap-3">
+        <TeamSide name={match.homeTeam} align="left" />
 
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center">
-          {match.status === "scheduled" ? (
-            <div className="flex h-10 w-10 rotate-45 items-center justify-center rounded-md border border-white/30 bg-black">
-              <span className="-rotate-45 text-[10px] font-bold text-white/80">VS</span>
-            </div>
-          ) : (
-            <span className="text-lg font-extrabold text-white">
-              {match.homeScore} - {match.awayScore}
+        <div className="flex shrink-0 flex-col items-center justify-center">
+          {isScheduled ? (
+            <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60">
+              vs
             </span>
+          ) : (
+            <>
+              <span className="text-2xl font-extrabold text-white">
+                {match.homeScore} - {match.awayScore}
+              </span>
+              <span className="mt-1 text-[10px] font-bold uppercase tracking-wide text-white/40">
+                {match.status === "live" ? "Live" : "Final"}
+              </span>
+            </>
           )}
         </div>
 
-        <TeamBadge name={match.awayTeam} />
+        <TeamSide name={match.awayTeam} align="right" />
       </div>
 
       {showToggle && (
