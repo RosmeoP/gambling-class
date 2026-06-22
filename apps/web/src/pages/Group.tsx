@@ -1,7 +1,9 @@
 import type { GroupMemberDTO, MatchDTO } from "@gambling-class/shared";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiFetch } from "../lib/api";
+import { GroupMatchHistory } from "../components/GroupMatchHistory";
 import { GroupMatchPredictions } from "../components/GroupMatchPredictions";
 
 interface GroupDetail {
@@ -13,6 +15,7 @@ interface GroupDetail {
 
 export function Group() {
   const { id } = useParams<{ id: string }>();
+  const [tab, setTab] = useState<"upcoming" | "history">("upcoming");
 
   const { data: group, isLoading: groupLoading } = useQuery({
     queryKey: ["group", id],
@@ -64,11 +67,37 @@ export function Group() {
         </ul>
       </div>
 
-      <h2 className="mb-3 text-lg font-semibold text-gray-900">Today's matches</h2>
-      <div className="space-y-4">
-        {matches?.length === 0 && <p className="text-gray-500">No matches scheduled today.</p>}
-        {matches?.map((match) => <GroupMatchPredictions key={match.id} match={match} groupId={group.id} />)}
+      <div className="mb-4 flex gap-2 border-b border-gray-200">
+        <button
+          onClick={() => setTab("upcoming")}
+          className={`px-3 py-2 text-sm font-medium ${
+            tab === "upcoming"
+              ? "border-b-2 border-gray-900 text-gray-900"
+              : "text-gray-400 hover:text-gray-600"
+          }`}
+        >
+          Today's matches
+        </button>
+        <button
+          onClick={() => setTab("history")}
+          className={`px-3 py-2 text-sm font-medium ${
+            tab === "history"
+              ? "border-b-2 border-gray-900 text-gray-900"
+              : "text-gray-400 hover:text-gray-600"
+          }`}
+        >
+          History
+        </button>
       </div>
+
+      {tab === "upcoming" && (
+        <div className="space-y-4">
+          {matches?.length === 0 && <p className="text-gray-500">No matches scheduled today.</p>}
+          {matches?.map((match) => <GroupMatchPredictions key={match.id} match={match} groupId={group.id} />)}
+        </div>
+      )}
+
+      {tab === "history" && <GroupMatchHistory groupId={group.id} />}
     </div>
   );
 }

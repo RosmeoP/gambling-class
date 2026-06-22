@@ -123,6 +123,57 @@ groupsRouter.post("/join", async (req, res) => {
   res.status(201).json({ id: group.id, name: group.name, alreadyMember: false });
 });
 
+const HISTORY_LIMIT = 30;
+
+groupsRouter.get("/:id/history", async (req, res) => {
+  const membership = await assertMember(req.params.id, req.userId!);
+  if (!membership) {
+    res.status(403).json({ error: "Not a member of this group" });
+    return;
+  }
+
+  const members = await prisma.groupMember.findMany({
+    where: { groupId: req.params.id },
+    include: { user: true },
+  });
+
+  const matches = await prisma.match.findMany({
+    where: { status: "finished" },
+    orderBy: { kickoff: "desc" },
+    take: HISTORY_LIMIT,
+    include: {
+      predictions: {
+        where: { userId: { in: members.map((m) => m.userId) } },
+      },
+    },
+  });
+
+  const result = matches.map((match) => {
+    const predictionsByUser = new Map(match.predictions.map((p) => [p.userId, p]));
+    return {
+      id: match.id,
+      externalId: match.externalId,
+      homeTeam: match.homeTeam,
+      awayTeam: match.awayTeam,
+      kickoff: match.kickoff,
+      status: match.status,
+      homeScore: match.homeScore,
+      awayScore: match.awayScore,
+      predictions: members.map((m) => {
+        const prediction = predictionsByUser.get(m.userId) ?? null;
+        return {
+          userId: m.userId,
+          name: m.user.name,
+          prediction: prediction ? { homeScore: prediction.homeScore, awayScore: prediction.awayScore } : null,
+          visible: true,
+        };
+      }),
+    };
+  });
+
+  res.json(result);
+});
+
 groupsRouter.post("/:id/regenerate-code", async (req, res) => {
   const membership = await assertMember(req.params.id, req.userId!);
   if (!membership || membership.role !== "admin") {

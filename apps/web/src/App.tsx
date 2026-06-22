@@ -6,6 +6,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Group } from "./pages/Group";
 import { JoinGroup } from "./pages/JoinGroup";
 import { Login } from "./pages/Login";
+import { MyGroups } from "./pages/MyGroups";
 import { NewGroup } from "./pages/NewGroup";
 import { Register } from "./pages/Register";
 import { Upcoming } from "./pages/Upcoming";
@@ -31,6 +32,14 @@ export function App() {
             element={
               <RequireAuth>
                 <Upcoming />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/groups"
+            element={
+              <RequireAuth>
+                <MyGroups />
               </RequireAuth>
             }
           />

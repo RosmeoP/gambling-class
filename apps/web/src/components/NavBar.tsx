@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 const NAV_LINKS = [
   { to: "/", label: "Dashboard", colorClass: "flag-text-portugal" },
   { to: "/upcoming", label: "Upcoming", colorClass: "flag-text-germany" },
+  { to: "/groups", label: "My groups", colorClass: "flag-text-netherlands" },
   { to: "/groups/new", label: "New group", colorClass: "flag-text-argentina" },
   { to: "/groups/join", label: "Join group", colorClass: "flag-text-brazil" },
 ];

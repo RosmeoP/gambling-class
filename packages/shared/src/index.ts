@@ -59,3 +59,15 @@ export interface MemberPredictionDTO {
   prediction: { homeScore: number; awayScore: number } | null;
   visible: boolean;
 }
+
+export interface MatchHistoryDTO {
+  id: string;
+  externalId: number;
+  homeTeam: string;
+  awayTeam: string;
+  kickoff: string;
+  status: MatchStatus;
+  homeScore: number | null;
+  awayScore: number | null;
+  predictions: MemberPredictionDTO[];
+}

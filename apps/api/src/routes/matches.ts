@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { fetchWorldCupMatches } from "../integrations/footballData.js";
 import { prisma } from "../lib/prisma.js";
+import { syncMatches } from "../lib/syncMatches.js";
 import { requireAuth } from "../middleware/auth.js";
 
 export const matchesRouter = Router();
@@ -61,10 +61,12 @@ matchesRouter.get("/today", async (req, res) => {
 
 matchesRouter.get("/upcoming", async (req, res) => {
   const now = new Date();
+  const threeDaysOut = new Date(now);
+  threeDaysOut.setDate(threeDaysOut.getDate() + 3);
+
   const matches = await prisma.match.findMany({
-    where: { kickoff: { gt: endOfDay(now) } },
+    where: { kickoff: { gt: endOfDay(now), lte: endOfDay(threeDaysOut) } },
     orderBy: { kickoff: "asc" },
-    take: 10,
     include: { predictions: { where: { userId: req.userId! } } },
   });
 
@@ -96,15 +98,8 @@ matchesRouter.get("/", async (req, res) => {
 
 matchesRouter.post("/sync", async (_req, res) => {
   try {
-    const matches = await fetchWorldCupMatches();
-    for (const m of matches) {
-      await prisma.match.upsert({
-        where: { externalId: m.externalId },
-        create: m,
-        update: m,
-      });
-    }
-    res.json({ synced: matches.length });
+    const synced = await syncMatches();
+    res.json({ synced });
   } catch (err) {
     res.status(502).json({ error: err instanceof Error ? err.message : "Sync failed" });
   }
