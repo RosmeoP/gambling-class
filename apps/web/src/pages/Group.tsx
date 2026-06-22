@@ -118,7 +118,7 @@ export function Group() {
 
       <h1 className="mb-2 text-2xl font-bold text-gray-900">{group.name}</h1>
 
-      <div className="liquid-glass mb-6 p-5 text-neutral-900 dark:text-white">
+      <div className="liquid-glass mb-6 p-5 text-neutral-900 dark:text-white animate-liquid-entrance delay-0">
         <div className="liquid-glass-sheen" aria-hidden />
         <p className="relative mb-2 text-sm font-semibold tracking-tight text-neutral-900 dark:text-white">Invite friends</p>
         <div className="relative flex items-center gap-2">
@@ -137,7 +137,7 @@ export function Group() {
         <p className="relative mt-2 text-xs text-neutral-400 dark:text-white/40">Code: {group.inviteCode}</p>
       </div>
 
-      <div className="liquid-glass mb-6 p-5 text-neutral-900 dark:text-white">
+      <div className="liquid-glass mb-6 p-5 text-neutral-900 dark:text-white animate-liquid-entrance delay-1">
         <div className="liquid-glass-sheen" aria-hidden />
         <p className="relative mb-3 text-sm font-semibold tracking-tight text-neutral-900 dark:text-white">Members ({group.members.length})</p>
         <ul className="relative divide-y divide-neutral-100 dark:divide-white/5">
@@ -177,7 +177,7 @@ export function Group() {
         <div className="mb-6 space-y-8">
           {matches?.length === 0 && <p className="text-gray-500">No matches scheduled today.</p>}
           {matches?.map((match, idx) => (
-            <div key={match.id}>
+            <div key={match.id} className={`animate-liquid-entrance delay-${Math.min(idx + 2, 9)}`}>
               {idx > 0 && <div className="h-px bg-neutral-200 dark:bg-white/10 my-8" />}
               <GroupMatchPredictions match={match} groupId={group.id} />
             </div>
