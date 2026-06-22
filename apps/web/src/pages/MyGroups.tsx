@@ -34,20 +34,23 @@ export function MyGroups() {
         <p className="text-gray-500">You're not in any groups yet. Create one or join with an invite code.</p>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {groups?.map((group) => (
           <Link
             key={group.id}
             to={`/groups/${group.id}`}
-            className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+            className="liquid-glass overflow-hidden flex items-center justify-between p-5 text-neutral-900 dark:text-white"
           >
-            <div>
-              <p className="font-semibold text-gray-900">{group.name}</p>
-              <p className="text-sm text-gray-500">
+            <div className="liquid-glass-sheen" aria-hidden />
+            <div className="relative z-10">
+              <p className="font-semibold text-neutral-900 dark:text-white">{group.name}</p>
+              <p className="text-sm text-neutral-500 dark:text-white/50">
                 {group.memberCount} member{group.memberCount === 1 ? "" : "s"}
               </p>
             </div>
-            <span className="text-xs font-medium uppercase text-gray-400">{group.myRole}</span>
+            <span className="relative z-10 text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-white/40">
+              {group.myRole}
+            </span>
           </Link>
         ))}
       </div>

@@ -118,31 +118,33 @@ export function Group() {
 
       <h1 className="mb-2 text-2xl font-bold text-gray-900">{group.name}</h1>
 
-      <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <p className="mb-2 text-sm font-medium text-gray-700">Invite friends</p>
-        <div className="flex items-center gap-2">
+      <div className="liquid-glass mb-6 p-5 text-neutral-900 dark:text-white">
+        <div className="liquid-glass-sheen" aria-hidden />
+        <p className="relative mb-2 text-sm font-semibold tracking-tight text-neutral-900 dark:text-white">Invite friends</p>
+        <div className="relative flex items-center gap-2">
           <input
             readOnly
             value={inviteLink}
-            className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm text-gray-600"
+            className="flex-1 rounded-xl border border-neutral-200 dark:border-white/10 bg-white/60 dark:bg-black/20 px-3 py-1.5 text-sm text-neutral-800 dark:text-neutral-200 outline-none"
           />
           <button
             onClick={() => navigator.clipboard.writeText(inviteLink)}
-            className="rounded bg-gray-100 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200"
+            className="rounded-xl bg-neutral-900 hover:bg-neutral-850 active:bg-neutral-950 text-white dark:bg-white dark:hover:bg-white/90 dark:active:bg-white/95 dark:text-neutral-900 px-4 py-1.5 text-sm font-semibold transition active:scale-[0.98]"
           >
             Copy
           </button>
         </div>
-        <p className="mt-2 text-xs text-gray-400">Code: {group.inviteCode}</p>
+        <p className="relative mt-2 text-xs text-neutral-400 dark:text-white/40">Code: {group.inviteCode}</p>
       </div>
 
-      <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <p className="mb-2 text-sm font-medium text-gray-700">Members ({group.members.length})</p>
-        <ul className="space-y-1">
+      <div className="liquid-glass mb-6 p-5 text-neutral-900 dark:text-white">
+        <div className="liquid-glass-sheen" aria-hidden />
+        <p className="relative mb-3 text-sm font-semibold tracking-tight text-neutral-900 dark:text-white">Members ({group.members.length})</p>
+        <ul className="relative divide-y divide-neutral-100 dark:divide-white/5">
           {group.members.map((m) => (
-            <li key={m.userId} className="flex justify-between text-sm text-gray-600">
+            <li key={m.userId} className="flex justify-between py-2 text-sm text-neutral-700 dark:text-white/80 first:pt-0 last:pb-0">
               <span>{m.name}</span>
-              <span className="text-xs uppercase text-gray-400">{m.role}</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-white/40">{m.role}</span>
             </li>
           ))}
         </ul>
