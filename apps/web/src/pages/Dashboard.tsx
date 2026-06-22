@@ -54,13 +54,17 @@ export function Dashboard() {
         <p className="text-gray-500">No matches scheduled today.</p>
       )}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {matches?.map((match) => (
-          <MatchEntry
+        {matches?.map((match, index) => (
+          <div
             key={match.id}
-            match={match}
-            expanded={Boolean(expandedIds[match.id])}
-            onToggle={() => handleToggle(match.id)}
-          />
+            className={`animate-liquid-entrance delay-${Math.min(index, 9)}`}
+          >
+            <MatchEntry
+              match={match}
+              expanded={Boolean(expandedIds[match.id])}
+              onToggle={() => handleToggle(match.id)}
+            />
+          </div>
         ))}
       </div>
     </div>

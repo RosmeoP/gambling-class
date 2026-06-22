@@ -92,7 +92,11 @@ export function MatchCard({
       {showToggle && (
         <button
           onClick={onToggle}
-          className="relative mt-5 w-full rounded-xl bg-black/5 hover:bg-black/10 active:bg-black/15 border border-neutral-200/80 text-neutral-800 dark:bg-white/10 dark:hover:bg-white/15 dark:active:bg-white/20 dark:border-white/10 dark:text-white px-4 py-2.5 text-center text-sm font-semibold tracking-tight transition-all duration-200 shadow-sm active:scale-[0.99]"
+          className={`relative mt-5 w-full rounded-xl border px-4 py-2.5 text-center text-sm font-semibold tracking-tight transition-all duration-250 shadow-sm active:scale-[0.99] ${
+            expanded
+              ? "bg-black/10 border-neutral-300 dark:bg-white/20 dark:border-white/25 text-neutral-900 dark:text-white font-bold shadow-inner"
+              : "bg-black/5 hover:bg-black/10 border-neutral-200/80 text-neutral-800 dark:bg-white/10 dark:hover:bg-white/15 dark:border-white/10 dark:text-white"
+          }`}
         >
           {expanded ? "Hide details" : "View details"}
         </button>

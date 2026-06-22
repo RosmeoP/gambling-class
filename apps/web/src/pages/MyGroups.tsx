@@ -35,11 +35,11 @@ export function MyGroups() {
       )}
 
       <div className="space-y-4">
-        {groups?.map((group) => (
+        {groups?.map((group, index) => (
           <Link
             key={group.id}
             to={`/groups/${group.id}`}
-            className="liquid-glass overflow-hidden flex items-center justify-between p-5 text-neutral-900 dark:text-white"
+            className={`liquid-glass overflow-hidden flex items-center justify-between p-5 text-neutral-900 dark:text-white animate-liquid-entrance delay-${Math.min(index, 9)}`}
           >
             <div className="liquid-glass-sheen" aria-hidden />
             <div className="relative z-10">

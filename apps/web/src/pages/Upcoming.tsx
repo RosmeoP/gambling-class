@@ -53,8 +53,13 @@ export function Upcoming() {
               <div className="h-px flex-1 bg-gradient-to-r from-gray-300 to-transparent" />
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {group.matches.map((match) => (
-                <MatchEntry key={match.id} match={match} readOnly />
+              {group.matches.map((match, index) => (
+                <div
+                  key={match.id}
+                  className={`animate-liquid-entrance delay-${Math.min(index, 9)}`}
+                >
+                  <MatchEntry match={match} readOnly />
+                </div>
               ))}
             </div>
           </div>

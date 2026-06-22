@@ -37,7 +37,11 @@ export function MatchEntry({
   return (
     <div className="space-y-3">
       <MatchCard match={match} expanded={expanded} onToggle={onToggle} showWeekday={showWeekday} />
-      {expanded && <PredictionForm match={match} />}
+      {expanded && (
+        <div className="animate-liquid-expand">
+          <PredictionForm match={match} />
+        </div>
+      )}
     </div>
   );
 }
