@@ -231,6 +231,11 @@
               background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.liquid-glass-static {
+  animation: none !important;
+  border-radius: 24px !important;
+}
+
 .liquid-glass:hover {
   /* Transition to a more pronounced active water drop shadow, and elevate */
   /* Blue color and blue caustics are completely removed from hover, shadows inside made less intense */
