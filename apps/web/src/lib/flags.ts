@@ -77,5 +77,5 @@ export function getFlagCode(teamName: string | null | undefined): string | null 
 
 export function getFlagUrl(teamName: string | null | undefined): string | null {
   const code = getFlagCode(teamName);
-  return code ? `https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags/${code}.svg` : null;
+  return code ? `https://flagcdn.com/${code}.svg` : null;
 }
