@@ -22,11 +22,13 @@ export function MatchCard({
   expanded,
   onToggle,
   showWeekday = false,
+  showToggle = true,
 }: {
   match: MatchDTO;
   expanded: boolean;
   onToggle: () => void;
   showWeekday?: boolean;
+  showToggle?: boolean;
 }) {
   const formattedDate = new Date(match.kickoff).toLocaleString(undefined, {
     weekday: showWeekday ? "short" : undefined,
@@ -67,12 +69,14 @@ export function MatchCard({
         <TeamBadge name={match.awayTeam} />
       </div>
 
-      <button
-        onClick={onToggle}
-        className="mt-5 w-full rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 px-4 py-2 text-center text-sm font-bold uppercase tracking-wide text-black transition hover:from-yellow-400 hover:to-orange-400"
-      >
-        {expanded ? "Hide details" : "View details"}
-      </button>
+      {showToggle && (
+        <button
+          onClick={onToggle}
+          className="mt-5 w-full rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 px-4 py-2 text-center text-sm font-bold uppercase tracking-wide text-black transition hover:from-yellow-400 hover:to-orange-400"
+        >
+          {expanded ? "Hide details" : "View details"}
+        </button>
+      )}
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import type { MatchDTO } from "@gambling-class/shared";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { apiFetch } from "../lib/api";
 import { MatchEntry } from "../components/MatchEntry";
 
@@ -35,39 +34,11 @@ export function Upcoming() {
     queryFn: () => apiFetch<MatchDTO[]>("/matches/upcoming"),
   });
 
-  const [allExpanded, setAllExpanded] = useState(false);
-  const [overrides, setOverrides] = useState<Record<string, boolean>>({});
-
   const dayGroups = matches ? groupByDay(matches) : [];
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Upcoming matches</h1>
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-gray-600">
-            {allExpanded ? "Showing details" : "Hiding details"}
-          </span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={allExpanded}
-            onClick={() => {
-              setAllExpanded((value) => !value);
-              setOverrides({});
-            }}
-            className={`relative h-7 w-14 rounded-full transition-colors ${
-              allExpanded ? "bg-emerald-500" : "bg-gray-300"
-            }`}
-          >
-            <span
-              className={`absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                allExpanded ? "translate-x-7" : "translate-x-0"
-              }`}
-            />
-          </button>
-        </div>
-      </div>
+      <h1 className="mb-6 text-2xl font-bold text-gray-900">Upcoming matches</h1>
 
       {isLoading && <p className="text-gray-500">Loading...</p>}
       {!isLoading && matches?.length === 0 && (
@@ -82,17 +53,7 @@ export function Upcoming() {
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {group.matches.map((match) => (
-                <MatchEntry
-                  key={match.id}
-                  match={match}
-                  expanded={overrides[match.id] ?? allExpanded}
-                  onToggle={() =>
-                    setOverrides((prev) => ({
-                      ...prev,
-                      [match.id]: !(prev[match.id] ?? allExpanded),
-                    }))
-                  }
-                />
+                <MatchEntry key={match.id} match={match} readOnly />
               ))}
             </div>
           </div>
