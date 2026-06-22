@@ -14,14 +14,14 @@ function TeamSide({ name, align }: { name: string; align: "left" | "right" }) {
   );
 
   const labels = (
-    <div className={align === "left" ? "text-left" : "text-right"}>
+    <div className={`max-w-[7rem] ${align === "left" ? "text-left" : "text-right"}`}>
       <p className="text-sm font-bold uppercase tracking-wide text-white">{getTeamCode(name)}</p>
       <p className="truncate text-xs text-white/50">{name}</p>
     </div>
   );
 
   return (
-    <div className={`flex min-w-0 flex-1 items-center gap-3 ${align === "right" ? "flex-row-reverse" : ""}`}>
+    <div className={`flex items-center gap-3 ${align === "right" ? "flex-row-reverse" : ""}`}>
       {flag}
       {labels}
     </div>
@@ -53,8 +53,9 @@ export function MatchCard({
   const isScheduled = match.status === "scheduled";
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900 via-zinc-900 to-black p-5 shadow-lg">
-      <p className="mb-4 text-center text-sm font-medium text-white/60">
+    <div className="liquid-glass overflow-hidden rounded-2xl p-5 shadow-xl">
+      <div className="liquid-glass-sheen" aria-hidden />
+      <p className="relative mb-4 text-center text-sm font-medium text-white/70">
         {formattedDate}
         {match.status === "live" && (
           <span className="ml-2 inline-flex items-center gap-1 text-red-400">
@@ -64,7 +65,7 @@ export function MatchCard({
         )}
       </p>
 
-      <div className="flex items-center gap-3">
+      <div className="relative flex items-center justify-center gap-4 sm:gap-6">
         <TeamSide name={match.homeTeam} align="left" />
 
         <div className="flex shrink-0 flex-col items-center justify-center">
@@ -90,7 +91,7 @@ export function MatchCard({
       {showToggle && (
         <button
           onClick={onToggle}
-          className="mt-5 w-full rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 px-4 py-2 text-center text-sm font-bold uppercase tracking-wide text-black transition hover:from-yellow-400 hover:to-orange-400"
+          className="relative mt-5 w-full rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 px-4 py-2 text-center text-sm font-bold uppercase tracking-wide text-black transition hover:from-yellow-400 hover:to-orange-400"
         >
           {expanded ? "Hide details" : "View details"}
         </button>

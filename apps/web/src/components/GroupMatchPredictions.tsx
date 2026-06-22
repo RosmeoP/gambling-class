@@ -17,13 +17,16 @@ export function GroupMatchPredictions({ match, groupId }: { match: MatchDTO; gro
 
       <PredictionForm match={match} />
 
-      <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900 via-zinc-900 to-black p-4 shadow-lg">
-        <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Group predictions</p>
-        <ul className="space-y-1.5">
+      <div className="liquid-glass rounded-2xl p-4 shadow-xl">
+        <div className="liquid-glass-sheen" aria-hidden />
+        <p className="relative mb-2 text-xs font-bold uppercase tracking-wide text-white/60">
+          Group predictions
+        </p>
+        <ul className="relative space-y-1.5">
           {predictions?.map((p) => (
             <li key={p.userId} className="flex justify-between text-sm">
               <span className="text-white/80">{p.name}</span>
-              <span className={p.prediction ? "font-semibold text-white" : "text-white/30"}>
+              <span className={p.prediction ? "font-semibold text-white" : "text-white/40"}>
                 {p.prediction
                   ? `${p.prediction.homeScore} - ${p.prediction.awayScore}`
                   : p.visible
