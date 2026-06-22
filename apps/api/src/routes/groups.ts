@@ -174,6 +174,18 @@ groupsRouter.get("/:id/history", async (req, res) => {
   res.json(result);
 });
 
+groupsRouter.delete("/:id", async (req, res) => {
+  const membership = await assertMember(req.params.id, req.userId!);
+  if (!membership || membership.role !== "admin") {
+    res.status(403).json({ error: "Only a group admin can delete this group" });
+    return;
+  }
+
+  await prisma.group.delete({ where: { id: req.params.id } });
+
+  res.status(204).end();
+});
+
 groupsRouter.post("/:id/regenerate-code", async (req, res) => {
   const membership = await assertMember(req.params.id, req.userId!);
   if (!membership || membership.role !== "admin") {

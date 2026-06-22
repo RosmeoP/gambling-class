@@ -32,6 +32,7 @@ export function Upcoming() {
   const { data: matches, isLoading } = useQuery({
     queryKey: ["matches", "upcoming"],
     queryFn: () => apiFetch<MatchDTO[]>("/matches/upcoming"),
+    refetchInterval: 60 * 1000,
   });
 
   const dayGroups = matches ? groupByDay(matches) : [];

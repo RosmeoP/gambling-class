@@ -7,6 +7,7 @@ export function Dashboard() {
   const { data: matches, isLoading } = useQuery({
     queryKey: ["matches", "today"],
     queryFn: () => apiFetch<MatchDTO[]>("/matches/today"),
+    refetchInterval: 60 * 1000,
   });
 
   return (

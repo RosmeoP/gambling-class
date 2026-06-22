@@ -1,7 +1,7 @@
 import type { GroupMemberDTO, MatchDTO } from "@gambling-class/shared";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { apiFetch } from "../lib/api";
 import { GroupMatchHistory } from "../components/GroupMatchHistory";
 import { GroupMatchPredictions } from "../components/GroupMatchPredictions";
@@ -10,7 +10,80 @@ interface GroupDetail {
   id: string;
   name: string;
   inviteCode: string;
+  myRole: "admin" | "member";
   members: GroupMemberDTO[];
+}
+
+function DeleteGroupSection({ group }: { group: GroupDetail }) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [confirming, setConfirming] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+
+  const deleteMutation = useMutation({
+    mutationFn: () => apiFetch(`/groups/${group.id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["groups", "mine"] });
+      navigate("/groups");
+    },
+  });
+
+  if (group.myRole !== "admin") {
+    return null;
+  }
+
+  if (!confirming) {
+    return (
+      <div className="mb-6">
+        <button
+          onClick={() => setConfirming(true)}
+          className="text-sm font-medium text-red-500 hover:text-red-600"
+        >
+          Delete this group
+        </button>
+      </div>
+    );
+  }
+
+  const canConfirm = confirmText.trim() === group.name;
+
+  return (
+    <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+      <p className="mb-2 text-sm font-semibold text-red-700">Delete "{group.name}"?</p>
+      <p className="mb-3 text-sm text-red-600">
+        This permanently removes the group and its members for everyone. This can't be undone. Type the
+        group name to confirm.
+      </p>
+      <input
+        type="text"
+        value={confirmText}
+        onChange={(e) => setConfirmText(e.target.value)}
+        placeholder={group.name}
+        className="mb-3 w-full rounded border border-red-300 px-2 py-1 text-sm"
+      />
+      {deleteMutation.isError && (
+        <p className="mb-2 text-sm text-red-600">Could not delete the group. Try again.</p>
+      )}
+      <div className="flex gap-2">
+        <button
+          disabled={!canConfirm || deleteMutation.isPending}
+          onClick={() => deleteMutation.mutate()}
+          className="rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {deleteMutation.isPending ? "Deleting..." : "Delete permanently"}
+        </button>
+        <button
+          onClick={() => {
+            setConfirming(false);
+            setConfirmText("");
+          }}
+          className="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export function Group() {
@@ -26,6 +99,7 @@ export function Group() {
   const { data: matches } = useQuery({
     queryKey: ["matches", "today"],
     queryFn: () => apiFetch<MatchDTO[]>("/matches/today"),
+    refetchInterval: 60 * 1000,
   });
 
   const inviteLink = group ? `${window.location.origin}/groups/join?code=${group.inviteCode}` : "";
@@ -91,13 +165,15 @@ export function Group() {
       </div>
 
       {tab === "upcoming" && (
-        <div className="space-y-4">
+        <div className="mb-6 space-y-4">
           {matches?.length === 0 && <p className="text-gray-500">No matches scheduled today.</p>}
           {matches?.map((match) => <GroupMatchPredictions key={match.id} match={match} groupId={group.id} />)}
         </div>
       )}
 
-      {tab === "history" && <GroupMatchHistory groupId={group.id} />}
+      {tab === "history" && <div className="mb-6"><GroupMatchHistory groupId={group.id} /></div>}
+
+      <DeleteGroupSection group={group} />
     </div>
   );
 }

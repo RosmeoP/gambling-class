@@ -7,6 +7,7 @@ export function GroupMatchPredictions({ match, groupId }: { match: MatchDTO; gro
   const { data: predictions } = useQuery({
     queryKey: ["predictions", match.id, groupId],
     queryFn: () => apiFetch<MemberPredictionDTO[]>(`/predictions/matches/${match.id}?groupId=${groupId}`),
+    refetchInterval: 60 * 1000,
   });
 
   return (
