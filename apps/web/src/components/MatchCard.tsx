@@ -4,19 +4,19 @@ import { getFlagUrl, getTeamCode } from "../lib/flags";
 function TeamSide({ name, align }: { name: string; align: "left" | "right" }) {
   const flagUrl = getFlagUrl(name);
   const flag = (
-    <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 shadow-inner ring-1 ring-white/15">
+    <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-black/5 dark:bg-white/5 shadow-inner ring-1 ring-black/10 dark:ring-white/10">
       {flagUrl ? (
         <img src={flagUrl} alt={`${name} flag`} className="h-full w-full object-cover" />
       ) : (
-        <span className="text-xs font-bold text-white/40">?</span>
+        <span className="text-xs font-bold text-neutral-400 dark:text-white/40">?</span>
       )}
     </span>
   );
 
   const labels = (
     <div className={`max-w-[7rem] ${align === "left" ? "text-left" : "text-right"}`}>
-      <p className="text-sm font-bold uppercase tracking-wide text-white">{getTeamCode(name)}</p>
-      <p className="truncate text-xs text-white/50">{name}</p>
+      <p className="text-sm font-semibold uppercase tracking-wide text-neutral-900 dark:text-white">{getTeamCode(name)}</p>
+      <p className="truncate text-xs text-neutral-500 dark:text-white/50">{name}</p>
     </div>
   );
 
@@ -53,13 +53,13 @@ export function MatchCard({
   const isScheduled = match.status === "scheduled";
 
   return (
-    <div className="liquid-glass overflow-hidden rounded-2xl p-5 shadow-xl">
+    <div className="liquid-glass overflow-hidden p-5 shadow-xl">
       <div className="liquid-glass-sheen" aria-hidden />
-      <p className="relative mb-4 text-center text-sm font-medium text-white/70">
+      <p className="relative mb-4 text-center text-xs font-semibold tracking-wide text-neutral-500 dark:text-white/70">
         {formattedDate}
         {match.status === "live" && (
-          <span className="ml-2 inline-flex items-center gap-1 text-red-400">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
+          <span className="ml-2 inline-flex items-center gap-1 text-red-500 dark:text-red-400">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500 dark:bg-red-400" />
             LIVE
           </span>
         )}
@@ -70,15 +70,15 @@ export function MatchCard({
 
         <div className="flex shrink-0 flex-col items-center justify-center">
           {isScheduled ? (
-            <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white/60">
+            <span className="rounded-full border border-neutral-200/60 dark:border-white/10 bg-black/5 dark:bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-neutral-500 dark:text-white/55">
               vs
             </span>
           ) : (
             <>
-              <span className="text-2xl font-extrabold text-white">
+              <span className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
                 {match.homeScore} - {match.awayScore}
               </span>
-              <span className="mt-1 text-[10px] font-bold uppercase tracking-wide text-white/40">
+              <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-white/40">
                 {match.status === "live" ? "Live" : "Final"}
               </span>
             </>
@@ -91,7 +91,7 @@ export function MatchCard({
       {showToggle && (
         <button
           onClick={onToggle}
-          className="relative mt-5 w-full rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 px-4 py-2 text-center text-sm font-bold uppercase tracking-wide text-black transition hover:from-yellow-400 hover:to-orange-400"
+          className="relative mt-5 w-full rounded-xl bg-black/5 hover:bg-black/10 active:bg-black/15 border border-neutral-200/80 text-neutral-800 dark:bg-white/10 dark:hover:bg-white/15 dark:active:bg-white/20 dark:border-white/10 dark:text-white px-4 py-2.5 text-center text-sm font-semibold tracking-tight transition-all duration-200 shadow-sm active:scale-[0.99]"
         >
           {expanded ? "Hide details" : "View details"}
         </button>
