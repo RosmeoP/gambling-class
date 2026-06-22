@@ -8,6 +8,7 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
   const kickoffPassed = new Date(match.kickoff) <= new Date();
   const [homeScore, setHomeScore] = useState(match.myPrediction?.homeScore ?? 0);
   const [awayScore, setAwayScore] = useState(match.myPrediction?.awayScore ?? 0);
+  const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -16,9 +17,52 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
         body: JSON.stringify({ matchId: match.id, homeScore, awayScore }),
       }),
     onSuccess: () => {
+      setError(null);
       queryClient.invalidateQueries({ queryKey: ["matches"] });
     },
+    onError: (err: any) => {
+      let errMsg = "Failed to submit prediction. Please try again.";
+      if (err instanceof Error) {
+        try {
+          const parsed = JSON.parse(err.message);
+          errMsg = typeof parsed === "string" ? parsed : (parsed.error || errMsg);
+        } catch {
+          errMsg = err.message;
+        }
+      }
+      setError(errMsg);
+    },
   });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    // 1. Kickoff passed check
+    if (new Date(match.kickoff) <= new Date()) {
+      setError("This match has already started. Predictions are locked.");
+      return;
+    }
+
+    // 2. Score validation
+    const homeVal = Number(homeScore);
+    const awayVal = Number(awayScore);
+    if (
+      isNaN(homeVal) ||
+      isNaN(awayVal) ||
+      homeVal < 0 ||
+      awayVal < 0 ||
+      homeVal > 50 ||
+      awayVal > 50 ||
+      !Number.isInteger(homeVal) ||
+      !Number.isInteger(awayVal)
+    ) {
+      setError("Scores must be integers between 0 and 50.");
+      return;
+    }
+
+    mutation.mutate();
+  };
 
   if (kickoffPassed) {
     const passedContent = (
@@ -85,16 +129,19 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
       >
         {match.myPrediction ? "Update prediction" : "Submit prediction"}
       </button>
+
+      {error && (
+        <p className="relative mt-3 text-center text-xs font-semibold text-red-500 dark:text-red-400">
+          {error}
+        </p>
+      )}
     </>
   );
 
   if (flat) {
     return (
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          mutation.mutate();
-        }}
+        onSubmit={handleSubmit}
         className="relative w-full text-neutral-900 dark:text-white"
       >
         {formContent}
@@ -104,10 +151,7 @@ export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?
 
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        mutation.mutate();
-      }}
+      onSubmit={handleSubmit}
       className="liquid-glass p-5 text-neutral-900 dark:text-white"
     >
       <div className="liquid-glass-sheen" aria-hidden />

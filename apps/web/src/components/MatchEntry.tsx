@@ -17,7 +17,7 @@ export function MatchEntry({
   onToggle?: () => void;
 }) {
   const kickoffPassed = new Date(match.kickoff) <= new Date();
-  const [internalExpanded, setInternalExpanded] = useState(!kickoffPassed);
+  const [internalExpanded, setInternalExpanded] = useState(false);
 
   if (readOnly) {
     return (
