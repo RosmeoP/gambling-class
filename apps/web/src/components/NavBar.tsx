@@ -9,13 +9,43 @@ const NAV_LINKS = [
   { to: "/groups/join", label: "Join group", colorClass: "flag-text-brazil" },
 ];
 
-const FLAG_OPTIONS: { value: string; label: string; gradient: string }[] = [
-  { value: "brazil", label: "🇧🇷 Brazil", gradient: "from-emerald-500 via-yellow-400 to-blue-700" },
-  { value: "portugal", label: "🇵🇹 Portugal", gradient: "from-green-700 via-green-700 to-red-600" },
-  { value: "argentina", label: "🇦🇷 Argentina", gradient: "from-sky-400 via-white to-sky-400" },
-  { value: "france", label: "🇫🇷 France", gradient: "from-blue-700 via-white to-red-600" },
-  { value: "germany", label: "🇩🇪 Germany", gradient: "from-neutral-900 via-red-600 to-yellow-400" },
-  { value: "italy", label: "🇮🇹 Italy", gradient: "from-green-600 via-white to-red-600" },
+const FLAG_OPTIONS: { value: string; label: string; gradient: string; colorClass: string }[] = [
+  {
+    value: "brazil",
+    label: "🇧🇷 Brazil",
+    gradient: "from-emerald-500 via-yellow-400 to-blue-700",
+    colorClass: "flag-text-brazil",
+  },
+  {
+    value: "portugal",
+    label: "🇵🇹 Portugal",
+    gradient: "from-green-700 via-green-700 to-red-600",
+    colorClass: "flag-text-portugal",
+  },
+  {
+    value: "argentina",
+    label: "🇦🇷 Argentina",
+    gradient: "from-sky-400 via-white to-sky-400",
+    colorClass: "flag-text-argentina",
+  },
+  {
+    value: "france",
+    label: "🇫🇷 France",
+    gradient: "from-blue-700 via-white to-red-600",
+    colorClass: "flag-text-france",
+  },
+  {
+    value: "germany",
+    label: "🇩🇪 Germany",
+    gradient: "from-neutral-900 via-red-600 to-yellow-400",
+    colorClass: "flag-text-germany",
+  },
+  {
+    value: "netherlands",
+    label: "🇳🇱 Netherlands",
+    gradient: "from-red-600 via-white to-blue-700",
+    colorClass: "flag-text-netherlands",
+  },
 ];
 
 const FLAG_STORAGE_KEY = "gc_flag";
@@ -113,7 +143,7 @@ export function NavBar() {
             >
               <Shirt className="h-4 w-4" strokeWidth={2.5} />
             </span>
-            <span className="font-medium text-gray-700">{user.name}</span>
+            <span className={`font-semibold ${activeFlag.colorClass}`}>{user.name}</span>
             <select
               value={flag}
               onChange={(event) => setFlag(event.target.value)}

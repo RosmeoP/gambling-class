@@ -130,7 +130,9 @@
 .flag-text-portugal,
 .flag-text-argentina,
 .flag-text-brazil,
-.flag-text-france {
+.flag-text-france,
+.flag-text-germany,
+.flag-text-netherlands {
   background-size: 100% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -146,7 +148,7 @@
 }
 
 .flag-text-argentina {
-  background-image: linear-gradient(90deg, #4d9fd6, #1f6fa8);
+  background-image: linear-gradient(90deg, #4d9fd6, #bfe0f2, #1f6fa8);
 }
 
 .flag-text-brazil {
@@ -155,6 +157,14 @@
 
 .flag-text-france {
   background-image: linear-gradient(90deg, #0055a4, #ef4135);
+}
+
+.flag-text-germany {
+  background-image: linear-gradient(90deg, #000000, #dd0000, #ffce00);
+}
+
+.flag-text-netherlands {
+  background-image: linear-gradient(90deg, #ae1c28, #d98ba0, #21468b);
 }
 
 @keyframes liquid-morph {
