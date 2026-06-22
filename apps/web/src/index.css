@@ -125,3 +125,48 @@
     @apply font-sans;
   }
 }
+
+.flag-gradient-text,
+.flag-text-portugal,
+.flag-text-argentina,
+.flag-text-brazil,
+.flag-text-france {
+  background-size: 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.flag-gradient-text {
+  background-image: linear-gradient(90deg, #009739, #ffcc00, #002776, #ce1126, #00a3e0);
+}
+
+.flag-text-portugal {
+  background-image: linear-gradient(90deg, #006600, #006600, #ff0000, #ff0000);
+}
+
+.flag-text-argentina {
+  background-image: linear-gradient(90deg, #4d9fd6, #1f6fa8);
+}
+
+.flag-text-brazil {
+  background-image: linear-gradient(90deg, #009739, #ffcc00, #002776);
+}
+
+.flag-text-france {
+  background-image: linear-gradient(90deg, #0055a4, #ef4135);
+}
+
+@keyframes liquid-morph {
+  0%,
+  100% {
+    border-radius: 9999px;
+  }
+  50% {
+    border-radius: 30% 70% 65% 35% / 55% 35% 65% 45%;
+  }
+}
+
+.liquid-indicator-morph {
+  animation: liquid-morph 0.5s ease-in-out;
+}
