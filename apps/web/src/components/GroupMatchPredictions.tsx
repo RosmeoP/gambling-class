@@ -12,13 +12,25 @@ export function GroupMatchPredictions({ match, groupId }: { match: MatchDTO; gro
   });
 
   return (
-    <div className="space-y-3">
-      <MatchCard match={match} expanded={false} onToggle={() => {}} showToggle={false} />
+    <div className="liquid-glass overflow-hidden shadow-xl">
+      <div className="liquid-glass-sheen" aria-hidden />
 
-      <PredictionForm match={match} />
+      {/* 1. Match card info section (embedded flat) */}
+      <div className="p-5 pb-4">
+        <MatchCard match={match} expanded={false} onToggle={() => {}} showToggle={false} flat />
+      </div>
 
-      <div className="liquid-glass p-4 shadow-xl">
-        <div className="liquid-glass-sheen" aria-hidden />
+      <div className="h-px bg-neutral-200/40 dark:bg-white/5 mx-5" />
+
+      {/* 2. Prediction form input section (embedded flat) */}
+      <div className="p-5 py-4">
+        <PredictionForm match={match} flat />
+      </div>
+
+      <div className="h-px bg-neutral-200/40 dark:bg-white/5 mx-5" />
+
+      {/* 3. Group predictions list section */}
+      <div className="p-5 pt-4">
         <p className="relative mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-white/55">
           Group predictions
         </p>

@@ -34,12 +34,14 @@ export function MatchCard({
   onToggle,
   showWeekday = false,
   showToggle = true,
+  flat = false,
 }: {
   match: MatchDTO;
   expanded: boolean;
   onToggle: () => void;
   showWeekday?: boolean;
   showToggle?: boolean;
+  flat?: boolean;
 }) {
   const formattedDate = new Date(match.kickoff).toLocaleString(undefined, {
     weekday: showWeekday ? "short" : undefined,
@@ -52,9 +54,8 @@ export function MatchCard({
 
   const isScheduled = match.status === "scheduled";
 
-  return (
-    <div className="liquid-glass overflow-hidden p-5 shadow-xl">
-      <div className="liquid-glass-sheen" aria-hidden />
+  const content = (
+    <>
       <p className="relative mb-4 text-center text-xs font-semibold tracking-wide text-neutral-500 dark:text-white/70">
         {formattedDate}
         {match.status === "live" && (
@@ -96,6 +97,17 @@ export function MatchCard({
           {expanded ? "Hide details" : "View details"}
         </button>
       )}
+    </>
+  );
+
+  if (flat) {
+    return <div className="relative w-full">{content}</div>;
+  }
+
+  return (
+    <div className="liquid-glass overflow-hidden p-5">
+      <div className="liquid-glass-sheen" aria-hidden />
+      {content}
     </div>
   );
 }

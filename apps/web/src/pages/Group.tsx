@@ -172,9 +172,14 @@ export function Group() {
       </div>
 
       {tab === "upcoming" && (
-        <div className="mb-6 space-y-4">
+        <div className="mb-6 space-y-8">
           {matches?.length === 0 && <p className="text-gray-500">No matches scheduled today.</p>}
-          {matches?.map((match) => <GroupMatchPredictions key={match.id} match={match} groupId={group.id} />)}
+          {matches?.map((match, idx) => (
+            <div key={match.id}>
+              {idx > 0 && <div className="h-px bg-neutral-200 dark:bg-white/10 my-8" />}
+              <GroupMatchPredictions match={match} groupId={group.id} />
+            </div>
+          ))}
         </div>
       )}
 

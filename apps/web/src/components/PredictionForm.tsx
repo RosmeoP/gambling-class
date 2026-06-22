@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../lib/api";
 
-export function PredictionForm({ match }: { match: MatchDTO }) {
+export function PredictionForm({ match, flat = false }: { match: MatchDTO; flat?: boolean }) {
   const queryClient = useQueryClient();
   const kickoffPassed = new Date(match.kickoff) <= new Date();
   const [homeScore, setHomeScore] = useState(match.myPrediction?.homeScore ?? 0);
@@ -21,28 +21,31 @@ export function PredictionForm({ match }: { match: MatchDTO }) {
   });
 
   if (kickoffPassed) {
-    return (
-      <div className="liquid-glass p-5 text-neutral-900 dark:text-white shadow-xl">
-        <div className="liquid-glass-sheen" aria-hidden />
+    const passedContent = (
+      <>
         <h3 className="relative text-base font-semibold tracking-tight text-neutral-900 dark:text-white">Your prediction</h3>
         <p className="relative mt-2 text-sm text-neutral-600 dark:text-white/80">
           {match.myPrediction
             ? `You predicted ${match.myPrediction.homeScore} - ${match.myPrediction.awayScore}`
             : "You didn't submit a prediction for this match."}
         </p>
+      </>
+    );
+
+    if (flat) {
+      return <div className="relative w-full">{passedContent}</div>;
+    }
+
+    return (
+      <div className="liquid-glass p-5 text-neutral-900 dark:text-white">
+        <div className="liquid-glass-sheen" aria-hidden />
+        {passedContent}
       </div>
     );
   }
 
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        mutation.mutate();
-      }}
-      className="liquid-glass p-5 text-neutral-900 dark:text-white shadow-xl"
-    >
-      <div className="liquid-glass-sheen" aria-hidden />
+  const formContent = (
+    <>
       <h3 className="relative text-base font-semibold tracking-tight text-neutral-900 dark:text-white">Predict the score</h3>
 
       <div className="relative mt-5 flex items-center justify-center gap-6">
@@ -82,6 +85,33 @@ export function PredictionForm({ match }: { match: MatchDTO }) {
       >
         {match.myPrediction ? "Update prediction" : "Submit prediction"}
       </button>
+    </>
+  );
+
+  if (flat) {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          mutation.mutate();
+        }}
+        className="relative w-full text-neutral-900 dark:text-white"
+      >
+        {formContent}
+      </form>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        mutation.mutate();
+      }}
+      className="liquid-glass p-5 text-neutral-900 dark:text-white"
+    >
+      <div className="liquid-glass-sheen" aria-hidden />
+      {formContent}
     </form>
   );
 }
